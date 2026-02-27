@@ -32,5 +32,154 @@
             </div>
         </div>
     </div>    
+
+    <!-- animation overlay -->
+    <div id="animOverlay">
+        <img id="animImg" src="" alt="" />
+        <button id="skipBtn" type="button">Saltar animación</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const items = document.querySelectorAll('.grid-container .item img');
+            const overlay = document.getElementById('animOverlay');
+            const animImg = document.getElementById('animImg');
+            const skipBtn = document.getElementById('skipBtn');
+            const collageContainer = document.querySelector('.container');
+            let skipRequested = false;
+
+            // hide collage initially
+            collageContainer.style.opacity = '0';
+
+            const sources = Array.from(items).map(img => img.src);
+
+            // ensure we show 100 frames by repeating the list if needed
+            const targetCount = 100;
+            let sequence = [];
+            for (let i = 0; i < targetCount; i++) {
+                sequence.push(sources[i % sources.length]);
+            }
+
+            // slower, fixed animation timing for more nostalgia
+            let displayTime = 4000; // 4s per photo
+
+            function randomPosition(el) {
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const w = el.offsetWidth;
+                const h = el.offsetHeight;
+                const left = Math.random() * (vw - w);
+                const top = Math.random() * (vh - h);
+                el.style.left = left + 'px';
+                el.style.top = top + 'px';
+            }
+
+            function endAnimation() {
+                skipRequested = true;
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    collageContainer.style.transition = 'opacity 1s';
+                    collageContainer.style.opacity = '1';
+                    populateCollage();
+                }, 500);
+            }
+
+            function populateCollage() {
+                // hide original container background
+                const container = document.querySelector('.container');
+                container.classList.add('scatter');
+
+                // create full screen layer for items
+                let layer = document.querySelector('.scatter-layer');
+                if (!layer) {
+                    layer = document.createElement('div');
+                    layer.className = 'scatter-layer';
+                    document.body.appendChild(layer);
+                }
+                layer.innerHTML = '';
+
+                // compute item size based on number of images to avoid crowding
+                const baseSize = 80;
+                const itemSize = Math.max(40, Math.floor(baseSize * Math.pow(0.85, sequence.length / 20)));
+
+                sequence.forEach(src => {
+                    const div = document.createElement('div');
+                    div.className = 'item';
+                    div.style.width = itemSize + 'px';
+                    div.style.height = itemSize + 'px';
+                    const img = document.createElement('img');
+                    img.src = src;
+                    div.appendChild(img);
+                    layer.appendChild(div);
+                });
+
+                // distribute items across entire viewport
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const cells = [];
+                const count = sequence.length;
+                const cols = Math.ceil(Math.sqrt(count));
+                const rows = Math.ceil(count / cols);
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        cells.push({r, c});
+                    }
+                }
+                // shuffle cells
+                for (let i = cells.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [cells[i], cells[j]] = [cells[j], cells[i]];
+                }
+
+                const items = layer.querySelectorAll('.item');
+                items.forEach((el, idx) => {
+                    const w = el.offsetWidth;
+                    const h = el.offsetHeight;
+                    const cell = cells[idx] || {r:0,c:0};
+                    const cellW = vw / cols;
+                    const cellH = vh / rows;
+                    const left = cell.c * cellW + Math.random() * (cellW - w);
+                    const top = cell.r * cellH + Math.random() * (cellH - h);
+                    el.style.position = 'absolute';
+                    el.style.left = left + 'px';
+                    el.style.top = top + 'px';
+                });
+            }
+
+            skipBtn.addEventListener('click', endAnimation);
+
+            function showImage(index) {
+                if (skipRequested || index >= sequence.length) {
+                    endAnimation();
+                    return;
+                }
+
+                animImg.src = sequence[index];
+                // clear previous position
+                animImg.style.left = '';
+                animImg.style.top = '';
+
+                // when image is loaded, randomize and fade
+                animImg.onload = () => {
+                    randomPosition(animImg);
+                    overlay.classList.add('visible');
+
+                    // after displayTime fade out
+                    setTimeout(() => {
+                        overlay.classList.remove('visible');
+                    }, displayTime);
+
+                    // schedule next image slightly after fade out begins
+                    setTimeout(() => {
+                        showImage(index + 1);
+                    }, displayTime + 500);
+                };
+            }
+
+            // start sequence
+            showImage(0);
+        });
+    </script>
 </body>
 </html>

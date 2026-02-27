@@ -8,6 +8,11 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* darken for a nostalgic, shadowed look */
+  filter: brightness(0.7);
+  /* soften edges with a radial mask for a faded border effect */
+  -webkit-mask-image: radial-gradient(circle, black 80%, transparent 100%);
+          mask-image: radial-gradient(circle, black 80%, transparent 100%);
 }
 
 .container {
@@ -16,15 +21,36 @@ img {
   align-items: center;
   width: 100%;
   padding: 20px 20px;
+  overflow: auto; /* allow scroll when collage larger than viewport */
+}
+
+/* remove pink gradient when scattering images */
+.container.scatter {
+  background: none;
+}
+
+/* layer that will host scattered items over full screen */
+.scatter-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 100;
 }
 
 .grid-container {
   margin: auto;
-  max-width: 600px;
-  aspect-ratio: 1/1;
+  /* remove max-width so it can grow to fit many items */
   display: grid;
-  grid-template-columns: repeat(16, 1fr);
-  grid-template-rows: repeat(16, 1fr);
+  position: relative; /* needed for absolute positioning of children in final collage */
+}
+
+/* when final layout active, items are positioned absolutely; width/height set by script */
+.grid-container.final .item {
+  position: absolute;
 }
 
 .collage1 {
@@ -80,3 +106,54 @@ img {
   z-index: 99;
   transform: scale(1.3);
 }
+
+/* animation overlay for sequential photos */
+#animOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+#skipBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  pointer-events: auto;
+  font-size: 0.9rem;
+}
+
+#skipBtn:hover {
+  background: rgba(0,0,0,0.8);
+}
+
+#animOverlay.visible {
+  opacity: 1;
+}
+
+#animOverlay img {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.5) 5px 5px 5px 0px;
+  transition: opacity 0.5s, transform 0.3s;
+  /* start centered in case randomPosition hasn't run yet */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
