@@ -86,64 +86,44 @@
             }
 
             function populateCollage() {
-                // hide original container background
-                const container = document.querySelector('.container');
-                container.classList.add('scatter');
+                // Recreate the original grid layout with 7 items
+                const containerGrid = document.querySelector('.grid-container');
+                containerGrid.classList.remove('final');
+                containerGrid.innerHTML = '';
 
-                // create full screen layer for items
-                let layer = document.querySelector('.scatter-layer');
-                if (!layer) {
-                    layer = document.createElement('div');
-                    layer.className = 'scatter-layer';
-                    document.body.appendChild(layer);
-                }
-                layer.innerHTML = '';
+                // Re-add original 7 items with their classes
+                const positions = [
+                    {class: 'item1', src: sources[0]},
+                    {class: 'item2', src: sources[1]},
+                    {class: 'item3', src: sources[2]},
+                    {class: 'item4', src: sources[3]},
+                    {class: 'item5', src: sources[4]},
+                    {class: 'item6', src: sources[5]},
+                    {class: 'item7', src: sources[6]},
+                    {class: 'item8', src: sources[6]},
+                    {class: 'item9', src: sources[6]},
+                    {class: 'item10', src: sources[6]},
+                    {class: 'item11', src: sources[6]},
+                    {class: 'item12', src: sources[6]},
+                    {class: 'item13', src: sources[6]},
+                    {class: 'item14', src: sources[6]},
+                    {class: 'item15', src: sources[6]},
+                    {class: 'item16', src: sources[6]},
+                    {class: 'item17', src: sources[6]},
+                    {class: 'item18', src: sources[6]},
+                    {class: 'item19', src: sources[6]},
+                    {class: 'item20', src: sources[6]},
+                    {class: 'item21', src: sources[6]},
+                    {class: 'item22', src: sources[6]},
+                ];
 
-                // compute item size based on number of images to avoid crowding
-                const baseSize = 80;
-                const itemSize = Math.max(40, Math.floor(baseSize * Math.pow(0.85, sequence.length / 20)));
-
-                sequence.forEach(src => {
+                positions.forEach(pos => {
                     const div = document.createElement('div');
-                    div.className = 'item';
-                    div.style.width = itemSize + 'px';
-                    div.style.height = itemSize + 'px';
+                    div.className = `item ${pos.class}`;
                     const img = document.createElement('img');
-                    img.src = src;
+                    img.src = pos.src;
                     div.appendChild(img);
-                    layer.appendChild(div);
-                });
-
-                // distribute items across entire viewport
-                const vw = window.innerWidth;
-                const vh = window.innerHeight;
-                const cells = [];
-                const count = sequence.length;
-                const cols = Math.ceil(Math.sqrt(count));
-                const rows = Math.ceil(count / cols);
-                for (let r = 0; r < rows; r++) {
-                    for (let c = 0; c < cols; c++) {
-                        cells.push({r, c});
-                    }
-                }
-                // shuffle cells
-                for (let i = cells.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [cells[i], cells[j]] = [cells[j], cells[i]];
-                }
-
-                const items = layer.querySelectorAll('.item');
-                items.forEach((el, idx) => {
-                    const w = el.offsetWidth;
-                    const h = el.offsetHeight;
-                    const cell = cells[idx] || {r:0,c:0};
-                    const cellW = vw / cols;
-                    const cellH = vh / rows;
-                    const left = cell.c * cellW + Math.random() * (cellW - w);
-                    const top = cell.r * cellH + Math.random() * (cellH - h);
-                    el.style.position = 'absolute';
-                    el.style.left = left + 'px';
-                    el.style.top = top + 'px';
+                    containerGrid.appendChild(div);
                 });
             }
 

@@ -1,159 +1,254 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&display=swap');
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+body {
+  overflow: hidden;
+  background: #0a0a0f;
+}
+
+/* Fondo con gradiente atmosférico */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(80, 40, 120, 0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 70%, rgba(180, 80, 40, 0.2) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(20, 60, 100, 0.3) 0%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+}
+
 img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* darken for a nostalgic, shadowed look */
-  filter: brightness(0.7);
-  /* soften edges with a radial mask for a faded border effect */
-  -webkit-mask-image: radial-gradient(circle, black 80%, transparent 100%);
-          mask-image: radial-gradient(circle, black 80%, transparent 100%);
+  filter: brightness(0.75) saturate(0.85);
+  transition: filter 0.5s ease, transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  display: block;
 }
 
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 20px 20px;
-  overflow: auto; /* allow scroll when collage larger than viewport */
-}
-
-/* remove pink gradient when scattering images */
-.container.scatter {
-  background: none;
-}
-
-/* layer that will host scattered items over full screen */
-.scatter-layer {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100vw;
   height: 100vh;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 100;
+  padding: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .grid-container {
-  margin: auto;
-  /* remove max-width so it can grow to fit many items */
+  width: 100vw;
+  height: 100vh;
   display: grid;
-  position: relative; /* needed for absolute positioning of children in final collage */
-}
-
-/* when final layout active, items are positioned absolutely; width/height set by script */
-.grid-container.final .item {
-  position: absolute;
+  grid-template-columns: repeat(16, 1fr);
+  grid-template-rows: repeat(16, 1fr);
+  position: relative;
 }
 
 .collage1 {
-  background: linear-gradient(
-    135deg,
-    rgb(249, 110, 151) 0%,
-    rgb(144, 0, 62) 100%
-  );
+  background: none;
 }
 
-.collage1 .item {
-  border: 5px solid white;
-}
-
+/* Base de cada foto circular */
 .item {
-  border-radius: 50%;
   overflow: hidden;
-  box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px 0px;
+  border-radius: 50%;
+  aspect-ratio: 1 / 1;
+  align-self: center;
+  justify-self: center;
+  width: 70%;
+  position: relative;
+  cursor: pointer;
+
+  /* Borde sutil dorado */
+  outline: 2px solid rgba(255, 200, 100, 0.12);
+  outline-offset: 4px;
+
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 0 30px rgba(0, 0, 0, 0.3);
+
+  transition:
+    transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+    outline-color 0.4s ease,
+    filter 0.4s ease;
+
+  animation: fadeIn 0.9s ease both;
 }
 
-.item1 {
-  z-index: 10;
-  grid-area: 1/6/5/10;
-}
-.item2 {
-  z-index: 6;
-  grid-area: 5/1/11/7;
-}
-.item3 {
-  z-index: 5;
-  grid-area: 4/6/11/13;
-}
-.item4 {
-  grid-area: 2/-1/8/-7;
-}
-.item5 {
-  z-index: 10;
-  grid-area: 7/-3/10/-6;
-}
-.item6 {
-  z-index: 6;
-  grid-area: -1/3/-9/11;
-}
-.item7 {
-  z-index: 6;
-  grid-area: -3/-2/-9/-8;
-}
-.grid-container > * {
-  transition: all 0.5s;
+/* Brillo interno en hover */
+.item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, rgba(255, 220, 150, 0.18), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 2;
+  pointer-events: none;
 }
 
-.grid-container > *:hover {
-  z-index: 99;
-  transform: scale(1.3);
+/* Anillo pulsante en hover */
+.item::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 200, 100, 0);
+  transition: border-color 0.4s ease, inset 0.4s ease;
+  pointer-events: none;
+  z-index: 3;
 }
 
-/* animation overlay for sequential photos */
+/* HOVER — levita, brilla, foto a color pleno */
+.item:hover {
+  z-index: 99 !important;
+  transform: scale(1.28) translateY(-8px) !important;
+  outline-color: rgba(255, 200, 100, 0.65);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.75),
+    0 0 50px rgba(255, 180, 80, 0.28),
+    0 0 100px rgba(255, 130, 50, 0.1),
+    inset 0 0 20px rgba(255, 200, 100, 0.07);
+  filter: drop-shadow(0 0 18px rgba(255, 160, 60, 0.45));
+}
+
+.item:hover::before { opacity: 1; }
+
+.item:hover::after {
+  border-color: rgba(255, 200, 100, 0.35);
+  inset: -10px;
+}
+
+.item:hover img {
+  filter: brightness(1.05) saturate(1.25);
+  transform: scale(1.07);
+}
+
+/* Entrada escalonada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+    filter: blur(10px) brightness(0.4);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+  }
+}
+
+.item1  { animation-delay: 0.05s; }
+.item2  { animation-delay: 0.12s; }
+.item3  { animation-delay: 0.18s; }
+.item4  { animation-delay: 0.24s; }
+.item5  { animation-delay: 0.30s; }
+.item6  { animation-delay: 0.36s; }
+.item7  { animation-delay: 0.42s; }
+.item8  { animation-delay: 0.48s; }
+.item9  { animation-delay: 0.54s; }
+.item10 { animation-delay: 0.60s; }
+.item11 { animation-delay: 0.66s; }
+.item12 { animation-delay: 0.72s; }
+.item13 { animation-delay: 0.78s; }
+.item14 { animation-delay: 0.84s; }
+.item15 { animation-delay: 0.90s; }
+.item16 { animation-delay: 0.96s; }
+.item17 { animation-delay: 1.02s; }
+.item18 { animation-delay: 1.08s; }
+.item19 { animation-delay: 1.14s; }
+.item21 { animation-delay: 1.20s; }
+.item22 { animation-delay: 1.26s; }
+
+.no-shadow { box-shadow: none !important; }
+
+/* ---- Items originales 1-7 ---- */
+.item1 { z-index: 10; grid-area: 1/6/5/10; }
+.item2 { z-index: 6;  grid-area: 5/1/11/7; }
+.item3 { z-index: 5;  grid-area: 4/6/11/13; }
+.item4 {              grid-area: 2/-1/8/-7; }
+.item5 { z-index: 10; grid-area: 7/-3/10/-6; }
+.item6 { z-index: 6;  grid-area: -1/3/-9/11; }
+.item7 { z-index: 6;  grid-area: -3/-2/-9/-8; }
+
+/* ---- Items 8-22 — tamaños variados por toda la pantalla ---- */
+
+/* PEQUEÑOS */
+.item8  { grid-area: 1 / 1 / 3 / 3;   z-index: 3; transform: rotate(-4deg); }
+.item11 { grid-area: 1 / 14 / 4 / 17; z-index: 4; transform: rotate(5deg);  }
+.item16 { grid-area: 9 / 1 / 12 / 4;  z-index: 4; transform: rotate(2deg);  }
+.item22 { grid-area: 13 / 7 / 16 / 10;z-index: 4; transform: rotate(-2deg); }
+
+/* MEDIANOS */
+.item9  { grid-area: 1 / 4 / 6 / 9;    z-index: 5; transform: rotate(2deg);  }
+.item10 { grid-area: 1 / 10 / 6 / 14;  z-index: 3; transform: rotate(-3deg); }
+.item12 { grid-area: 4 / 1 / 9 / 6;    z-index: 6; transform: rotate(3deg);  }
+.item15 { grid-area: 6 / 13 / 11 / 17; z-index: 3; transform: rotate(-5deg); }
+.item19 { grid-area: 11 / 13 / 16 / 17;z-index: 5; transform: rotate(-4deg); }
+.item21 { grid-area: 12 / 1 / 17 / 6;  z-index: 7; transform: rotate(3deg);  }
+
+/* GRANDES */
+.item13 { grid-area: 4 / 6 / 11 / 12;  z-index: 7; transform: rotate(-2deg); }
+.item14 { grid-area: 5 / 10 / 12 / 15; z-index: 5; transform: rotate(4deg);  }
+.item17 { grid-area: 9 / 5 / 14 / 10;  z-index: 6; transform: rotate(-3deg); }
+.item18 { grid-area: 10 / 10 / 17 / 15;z-index: 2; transform: rotate(6deg);  }
+
+/* ---- Overlay de animación ---- */
 #animOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   pointer-events: none;
   overflow: hidden;
   z-index: 1000;
   opacity: 0;
   transition: opacity 0.5s;
+  background: rgba(10, 10, 15, 0.88);
 }
 
 #skipBtn {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 10px 15px;
-  background: rgba(0,0,0,0.6);
-  color: white;
-  border: none;
-  border-radius: 4px;
+  top: 24px; right: 24px;
+  padding: 10px 22px;
+  background: rgba(255, 200, 100, 0.08);
+  color: rgba(255, 200, 100, 0.85);
+  border: 1px solid rgba(255, 200, 100, 0.25);
+  border-radius: 20px;
   cursor: pointer;
   pointer-events: auto;
-  font-size: 0.9rem;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
 }
 
 #skipBtn:hover {
-  background: rgba(0,0,0,0.8);
+  background: rgba(255, 200, 100, 0.18);
+  border-color: rgba(255, 200, 100, 0.55);
+  color: rgba(255, 200, 100, 1);
 }
 
-#animOverlay.visible {
-  opacity: 1;
-}
+#animOverlay.visible { opacity: 1; }
 
 #animOverlay img {
   position: absolute;
-  width: 200px;
-  height: 200px;
+  width: 220px; height: 220px;
   object-fit: cover;
   border-radius: 50%;
-  box-shadow: rgba(0, 0, 0, 0.5) 5px 5px 5px 0px;
+  border: 2px solid rgba(255, 200, 100, 0.35);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(255, 180, 80, 0.2);
   transition: opacity 0.5s, transform 0.3s;
-  /* start centered in case randomPosition hasn't run yet */
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
 }
-
