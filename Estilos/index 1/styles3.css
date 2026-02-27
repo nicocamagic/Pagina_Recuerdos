@@ -81,7 +81,30 @@ select {
 [type="reset"],
 [type="submit"],
 button {
-  -webkit-appearance: button;
+  /* remove default browser styling for buttons */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* base visual style -- adjust as needed */
+  display: inline-block;
+  padding: 0.5em 1em;
+  border: 1px solid #3498db;
+  background-color: #3498db;
+  color: #fff;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+  cursor: pointer;
+}
+
+[type="button"],
+[type="reset"],
+[type="submit"],
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 [type="button"]::-moz-focus-inner,
 [type="reset"]::-moz-focus-inner,
@@ -123,11 +146,24 @@ textarea {
   height: auto;
 }
 [type="search"] {
-  -webkit-appearance: textfield;
-  outline-offset: -2px;
-}
-[type="search"]::-webkit-search-decoration {
+  /* reset vendor-specific appearance and apply custom styling */
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* visual styles */
+  border: 1px solid #ccc;
+  padding: 0.5em 0.75em;
+  border-radius: 4px;
+  outline: none;
+}
+
+/* hide default decorations/cancel button in WebKit browsers */
+[type="search"]::-webkit-search-decoration,
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-results-button,
+[type="search"]::-webkit-search-results-decoration {
+  display: none;
 }
 ::-webkit-file-upload-button {
   -webkit-appearance: button;

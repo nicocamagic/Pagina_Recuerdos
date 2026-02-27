@@ -1,5 +1,10 @@
 <?php
 require_once ("../includes/db.php");
+
+if (!isset($conexion)) {
+    die("Database connection error: Connection variable not initialized");
+}
+
 $post = isset($_POST['comment_id']) ? $_POST['comment_id'] : "";
 $comentario = isset($_POST['comentario']) ? $_POST['comentario'] : "";
 $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : "";
