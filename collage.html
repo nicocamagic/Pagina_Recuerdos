@@ -1,67 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prueba collage</title>
-    <link rel="stylesheet" href="collage.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homenaje Familiar - Collage</title>
+    <link rel="stylesheet" href="collage.css" />
 </head>
 <body>
     <div class="container collage1">
-        <div class="grid-container">
-            <div class="item item1">
-                <img src="IMG/Img_Pablo/2.jpg" alt="image">
-            </div>
-            <div class="item item2">
-                <img src="IMG/Img_Pablo/5.jpg" alt="image">
-            </div>
-            <div class="item item3">
-                <img src="IMG/Img_Pablo/7.jpg" alt="image">
-            </div>
-            <div class="item item4">
-                <img src="IMG/Img_Pablo/9.jpg" alt="image">
-            </div>
-            <div class="item item5">
-                <img src="IMG/Img_Pablo/10.jpg" alt="image">
-            </div>
-            <div class="item item6">
-                <img src="IMG/Img_Pablo/11.jpg" alt="image">
-            </div>
-            <div class="item item7">
-                <img src="IMG/Img_Pablo/12.jpg" alt="image">
-            </div>
+        <!-- El mosaico debe estar FUERA del grid-container para que no se borre -->
+        <div id="mosaicoFinal">
+            <img src="IMG/Img_Pablo/Esteban.jpg" alt="Mosaico Final" />
         </div>
-    </div>    
+        
+        <div class="grid-container">
+            <!-- Se generará automáticamente por el script -->
+        </div>
+    </div>
 
-    <!-- animation overlay -->
+    <!-- Capa de animación inicial -->
     <div id="animOverlay">
-        <img id="animImg" src="" alt="" />
+        <img id="animImg" src="" alt="Recuerdo" />
         <button id="skipBtn" type="button">Saltar animación</button>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const items = document.querySelectorAll('.grid-container .item img');
-            const overlay = document.getElementById('animOverlay');
-            const animImg = document.getElementById('animImg');
-            const skipBtn = document.getElementById('skipBtn');
-            const collageContainer = document.querySelector('.container');
+        document.addEventListener("DOMContentLoaded", function () {
+            const sources = [
+                "IMG/Img_Pablo/2.jpg",
+                "IMG/Img_Pablo/5.jpg",
+                "IMG/Img_Pablo/7.jpg",
+                "IMG/Img_Pablo/9.jpg",
+                "IMG/Img_Pablo/10.jpg",
+                "IMG/Img_Pablo/11.jpg",
+                "IMG/Img_Pablo/12.jpg",
+            ];
+
+            const overlay = document.getElementById("animOverlay");
+            const animImg = document.getElementById("animImg");
+            const skipBtn = document.getElementById("skipBtn");
+            const collageContainer = document.querySelector(".container");
+            const mosaico = document.getElementById("mosaicoFinal");
             let skipRequested = false;
 
-            // hide collage initially
-            collageContainer.style.opacity = '0';
+            collageContainer.style.opacity = "0";
 
-            const sources = Array.from(items).map(img => img.src);
-
-            // ensure we show 100 frames by repeating the list if needed
-            const targetCount = 100;
-            let sequence = [];
-            for (let i = 0; i < targetCount; i++) {
-                sequence.push(sources[i % sources.length]);
-            }
-
-            // slower, fixed animation timing for more nostalgia
-            let displayTime = 4000; // 4s per photo
+            const targetCount = 15;
+            let displayTime = 2500;
 
             function randomPosition(el) {
                 const vw = window.innerWidth;
@@ -70,94 +55,69 @@
                 const h = el.offsetHeight;
                 const left = Math.random() * (vw - w);
                 const top = Math.random() * (vh - h);
-                el.style.left = left + 'px';
-                el.style.top = top + 'px';
-            }
-
-            function endAnimation() {
-                skipRequested = true;
-                overlay.style.opacity = '0';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                    collageContainer.style.transition = 'opacity 1s';
-                    collageContainer.style.opacity = '1';
-                    populateCollage();
-                }, 500);
+                el.style.left = left + "px";
+                el.style.top = top + "px";
             }
 
             function populateCollage() {
-                // Recreate the original grid layout with 7 items
-                const containerGrid = document.querySelector('.grid-container');
-                containerGrid.classList.remove('final');
-                containerGrid.innerHTML = '';
+                const containerGrid = document.querySelector(".grid-container");
+                containerGrid.innerHTML = ""; // Ahora sí podemos limpiar porque el mosaico está fuera
 
-                // Re-add original 7 items with their classes
-                const positions = [
-                    {class: 'item1', src: sources[0]},
-                    {class: 'item2', src: sources[1]},
-                    {class: 'item3', src: sources[2]},
-                    {class: 'item4', src: sources[3]},
-                    {class: 'item5', src: sources[4]},
-                    {class: 'item6', src: sources[5]},
-                    {class: 'item7', src: sources[6]},
-                    {class: 'item8', src: sources[6]},
-                    {class: 'item9', src: sources[6]},
-                    {class: 'item10', src: sources[6]},
-                    {class: 'item11', src: sources[6]},
-                    {class: 'item12', src: sources[6]},
-                    {class: 'item13', src: sources[6]},
-                    {class: 'item14', src: sources[6]},
-                    {class: 'item15', src: sources[6]},
-                    {class: 'item16', src: sources[6]},
-                    {class: 'item17', src: sources[6]},
-                    {class: 'item18', src: sources[6]},
-                    {class: 'item19', src: sources[6]},
-                    {class: 'item20', src: sources[6]},
-                    {class: 'item21', src: sources[6]},
-                    {class: 'item22', src: sources[6]},
-                ];
-
-                positions.forEach(pos => {
-                    const div = document.createElement('div');
-                    div.className = `item ${pos.class}`;
-                    const img = document.createElement('img');
-                    img.src = pos.src;
+                for (let i = 1; i <= 22; i++) {
+                    const div = document.createElement("div");
+                    div.className = `item item${i}`;
+                    const img = document.createElement("img");
+                    img.src = sources[(i - 1) % sources.length];
                     div.appendChild(img);
                     containerGrid.appendChild(div);
-                });
+                }
             }
 
-            skipBtn.addEventListener('click', endAnimation);
+            function endAnimation() {
+                if (skipRequested) return;
+                skipRequested = true;
+                
+                overlay.style.opacity = "0";
+
+                setTimeout(() => {
+                    overlay.style.display = "none";
+                    populateCollage();
+                    collageContainer.style.transition = "opacity 1.5s ease-in";
+                    collageContainer.style.opacity = "1";
+
+                    // REVELAR MOSAICO
+                    setTimeout(() => {
+                        if (mosaico) {
+                            mosaico.classList.add("revelado");
+                        }
+                    }, 2000); 
+                }, 600);
+            }
+
+            skipBtn.addEventListener("click", endAnimation);
 
             function showImage(index) {
-                if (skipRequested || index >= sequence.length) {
+                if (skipRequested || index >= targetCount) {
                     endAnimation();
                     return;
                 }
 
-                animImg.src = sequence[index];
-                // clear previous position
-                animImg.style.left = '';
-                animImg.style.top = '';
+                animImg.src = sources[Math.floor(Math.random() * sources.length)];
 
-                // when image is loaded, randomize and fade
                 animImg.onload = () => {
                     randomPosition(animImg);
-                    overlay.classList.add('visible');
+                    overlay.classList.add("visible");
 
-                    // after displayTime fade out
                     setTimeout(() => {
-                        overlay.classList.remove('visible');
-                    }, displayTime);
+                        overlay.classList.remove("visible");
+                    }, displayTime - 500);
 
-                    // schedule next image slightly after fade out begins
                     setTimeout(() => {
                         showImage(index + 1);
-                    }, displayTime + 500);
+                    }, displayTime);
                 };
             }
 
-            // start sequence
             showImage(0);
         });
     </script>
