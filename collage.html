@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="collage.css" />
 </head>
 <body>
+    <!-- Botón de regresar -->
+    <a href="index.php" class="back-btn" id="backBtn">← Regresar</a>
+    
     <div class="container collage1">
         <!-- El mosaico debe estar FUERA del grid-container para que no se borre -->
         <div id="mosaicoFinal">
@@ -36,9 +39,10 @@
                 "IMG/Img_Pablo/12.jpg",
             ];
 
-            const overlay = document.getElementById("animOverlay");
+const overlay = document.getElementById("animOverlay");
             const animImg = document.getElementById("animImg");
             const skipBtn = document.getElementById("skipBtn");
+            const backBtn = document.getElementById("backBtn");
             const collageContainer = document.querySelector(".container");
             const mosaico = document.getElementById("mosaicoFinal");
             let skipRequested = false;
@@ -85,12 +89,19 @@
                     collageContainer.style.transition = "opacity 1.5s ease-in";
                     collageContainer.style.opacity = "1";
 
-                    // REVELAR MOSAICO
+// REVELAR MOSAICO
                     setTimeout(() => {
                         if (mosaico) {
                             mosaico.classList.add("revelado");
                         }
                     }, 2000); 
+                    
+                    // Mostrar botón de regresar
+                    setTimeout(() => {
+                        if (backBtn) {
+                            backBtn.classList.add("visible");
+                        }
+                    }, 2500);
                 }, 600);
             }
 
