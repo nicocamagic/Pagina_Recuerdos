@@ -1,287 +1,136 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Galería de Carlos Alberto Camargo Munevar</title>
-    <link rel="preconnect" href="https://fonts.bunny.net" />
-    <link
-      href="https://fonts.bunny.net/css?family=just-me-again-down-here:400"
-      rel="stylesheet"
-    />
-    <style>
-      @layer base, mouse, demo;
+    <title>Galeria Ana Soledad Lizarazo Calderon</title>
+    <link rel="stylesheet" href="../Estilos/Galeria/collage.css" />
+</head>
+<body>
+    <!-- Botón de regresar -->
+    <a href="../Paginas/Ana_Soledad.html" class="back-btn" id="backBtn">← Regresar</a>
+    
+    <div class="container collage1">
+        <!-- El mosaico debe estar FUERA del grid-container para que no se borre -->
+        <div id="mosaicoFinal">
+            <img src="../IMG/Img_Pablo/Esteban.jpg" alt="Mosaico Final" />
+        </div>
+        
+        <div class="grid-container">
+            <!-- Se generará automáticamente por el script -->
+        </div>
+    </div>
 
-      @layer demo {
-        @property --rotate {
-          syntax: "<number>";
-          inherits: true;
-          initial-value: 0;
-        }
-
-        body {
-          height: 100svh;
-          margin: 0;
-          overflow: hidden;
-          animation: --page-rotate 60s linear infinite;
-          --cards: 20;
-          animation-timing-function: steps(var(--cards));
-        }
-
-        @keyframes --page-rotate {
-          to {
-            --rotate: -1;
-          }
-        }
-
-        .wrapper {
-          --card-border-radius: 14px;
-          /* --cards set via JS */
-          --card-width: max(150px, 20vw);
-          --card-height: calc(var(--card-width) * 6 / 4);
-          --radius: calc(var(--card-width) * var(--cards) / (2 * 3.1416));
-          font-family: "Just Me Again Down Here", handwriting;
-          position: fixed;
-          width: calc(var(--radius) * 2);
-          height: calc(var(--radius) * 2);
-          top: 75%;
-          left: 50%;
-          transform-origin: center center;
-          transform: translateX(-50%) rotate(calc(var(--rotate) * 360deg));
-          transition: transform 300ms linear;
-        }
-
-        .wrapper > div {
-          /* --card-i set via JS */
-          --card-offset-radius: circle(var(--radius) at 50% 50%);
-          --card-offset-distance: calc(
-            (var(--card-i) - 1) / var(--cards) * 100%
-          );
-          --card-phase: calc((var(--card-i) - 1) / var(--cards) - 0.75);
-          --card-pos: mod(calc(var(--card-phase) + var(--rotate) + 1), 1);
-          --card-dist: min(var(--card-pos), calc(1 - var(--card-pos)));
-          --card-grayscale: clamp(0, calc(var(--card-dist) * 5), 1);
-          --card-opacity: calc(1 - (var(--card-dist) / 0.5));
-          --card-focus-range: 0.1;
-          --card-max-blur: 7px;
-          --card-norm-dist: min(var(--card-dist), var(--card-focus-range));
-          --card-blur-progress: calc(
-            var(--card-norm-dist) / var(--card-focus-range)
-          );
-          --card-blur: calc(var(--card-blur-progress) * var(--card-max-blur));
-          --caption-active: clamp(0, 1 - (var(--card-dist) / 0.001), 1);
-          --caption-opacity: var(--caption-active);
-          --caption-y: calc(-150px * (1 - var(--caption-active)));
-          filter: blur(var(--card-blur)) grayscale(var(--card-grayscale));
-          opacity: var(--card-opacity);
-          container: size;
-          offset-path: var(--card-offset-radius);
-          offset-distance: var(--card-offset-distance);
-          offset-rotate: auto;
-          offset-anchor: 50% 100%;
-          position: absolute;
-          width: var(--card-width);
-          aspect-ratio: 4/6;
-          object-fit: cover;
-          border-radius: var(--card-border-radius);
-          transition: all 300ms ease-in-out;
-          transform-origin: center calc(var(--card-height) * 2 * -1);
-        }
-
-        .wrapper > div::after {
-          content: attr(data-title);
-          position: absolute;
-          top: 100%;
-          left: 1rem;
-          opacity: var(--caption-opacity);
-          translate: 0 var(--caption-y);
-          font-size: clamp(1rem, 2vw + 0.045rem, 1.6rem);
-          z-index: -1;
-          transition:
-            opacity 300ms ease-in-out,
-            translate 300ms ease-in-out;
-        }
-
-        .wrapper > div > img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          border-radius: inherit;
-        }
-
-        @media (max-width: 768px) {
-          .wrapper {
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-          }
-          .wrapper > div {
-            width: 80vw;
-            height: auto;
-            aspect-ratio: 4/6;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            offset-path: none;
-            opacity: clamp(0, (0.03 - var(--card-dist)) * 1000, 1);
-            z-index: clamp(0, (0.03 - var(--card-dist)) * 1000, 100);
-          }
-        }
-      }
-
-      @layer mouse {
-        .mouse {
-          position: fixed;
-          bottom: 1rem;
-          left: 50%;
-          translate: -50% 0;
-          display: block;
-          width: 50px;
-          height: 50px;
-          opacity: 1;
-          color: white; /* Adjusted for visibility */
-          display: none;
-          animation-name: mouse;
-          animation-duration: 1s;
-          animation-timing-function: linear;
-          animation-fill-mode: forwards;
-          animation-timeline: scroll(nearest block);
-        }
-
-        @supports (animation-timeline: scroll()) {
-          .mouse {
-            display: block;
-          }
-        }
-
-        @keyframes mouse {
-          75% {
-            opacity: 1;
-          }
-          100% {
-            opacity: 0;
-          }
-        }
-      }
-
-      @layer base {
-        :root {
-          color-scheme: light dark;
-          --bg-dark: rgb(16, 24, 40);
-          --bg-light: rgb(248, 244, 238);
-          --txt-light: rgb(10, 10, 10);
-          --txt-dark: rgb(245, 245, 245);
-          --clr-bg: light-dark(var(--bg-light), var(--bg-dark));
-          --clr-txt: light-dark(var(--txt-light), var(--txt-dark));
-        }
-
-        body {
-          background-color: var(--clr-bg);
-          color: var(--clr-txt);
-          min-height: 100svh;
-          margin: 0;
-          font-family: system-ui, sans-serif;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <nav class="navbar">
-      <a
-        href="../Paginas/Carlos_Alberto.html"
-        class="nav-link"
-        style="
-          display: inline-block;
-          padding: 12px 24px;
-          background-color: #f492ad;
-          color: white;
-          text-decoration: none;
-          border-radius: 5px;
-          font-weight: bold;
-          transition: background-color 0.3s;
-          position: fixed;
-          top: 20px;
-          left: 20px;
-          z-index: 1000;
-        "
-        >← Volver al Inicio</a
-      >
-    </nav>
-
-    <section class="wrapper">
-      <div>
-        <img src="../IMG/1.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/2.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/3.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/4.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/5.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/6.jpg" />
-      </div>
-      <div id="img-7">
-        <img src="../IMG/7.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/8.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/9.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/10.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/11.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/12.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/1.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/2.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/3.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/4.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/5.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/6.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/7.jpg" />
-      </div>
-      <div>
-        <img src="../IMG/8.jpg" />
-      </div>
-    </section>
+    <!-- Capa de animación inicial -->
+    <div id="animOverlay">
+        <img id="animImg" src="" alt="Recuerdo" />
+        <button id="skipBtn" type="button">Saltar animación</button>
+    </div>
 
     <script>
-      // Script para asignar índices CSS, ya que sibling-count() no es estándar
-      const wrapper = document.querySelector(".wrapper");
-      const cards = wrapper.querySelectorAll("div");
-      wrapper.style.setProperty("--cards", cards.length);
-      cards.forEach((card, index) => {
-        card.style.setProperty("--card-i", index + 1);
-      });
+        document.addEventListener("DOMContentLoaded", function () {
+            const sources = [
+                "../IMG/Img_Pablo/2.jpg",
+                "../IMG/Img_Pablo/5.jpg",
+                "../IMG/Img_Pablo/7.jpg",
+                "../IMG/Img_Pablo/9.jpg",
+                "../IMG/Img_Pablo/10.jpg",
+                "../IMG/Img_Pablo/11.jpg",
+                "../IMG/Img_Pablo/12.jpg",
+            ];
+
+const overlay = document.getElementById("animOverlay");
+            const animImg = document.getElementById("animImg");
+            const skipBtn = document.getElementById("skipBtn");
+            const backBtn = document.getElementById("backBtn");
+            const collageContainer = document.querySelector(".container");
+            const mosaico = document.getElementById("mosaicoFinal");
+            let skipRequested = false;
+
+            collageContainer.style.opacity = "0";
+
+            const targetCount = 15;
+            let displayTime = 2500;
+
+            function randomPosition(el) {
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const w = el.offsetWidth;
+                const h = el.offsetHeight;
+                const left = Math.random() * (vw - w);
+                const top = Math.random() * (vh - h);
+                el.style.left = left + "px";
+                el.style.top = top + "px";
+            }
+
+            function populateCollage() {
+                const containerGrid = document.querySelector(".grid-container");
+                containerGrid.innerHTML = ""; // Ahora sí podemos limpiar porque el mosaico está fuera
+
+                for (let i = 1; i <= 22; i++) {
+                    const div = document.createElement("div");
+                    div.className = `item item${i}`;
+                    const img = document.createElement("img");
+                    img.src = sources[(i - 1) % sources.length];
+                    div.appendChild(img);
+                    containerGrid.appendChild(div);
+                }
+            }
+
+            function endAnimation() {
+                if (skipRequested) return;
+                skipRequested = true;
+                
+                overlay.style.opacity = "0";
+
+                setTimeout(() => {
+                    overlay.style.display = "none";
+                    populateCollage();
+                    collageContainer.style.transition = "opacity 1.5s ease-in";
+                    collageContainer.style.opacity = "1";
+
+// REVELAR MOSAICO
+                    setTimeout(() => {
+                        if (mosaico) {
+                            mosaico.classList.add("revelado");
+                        }
+                    }, 2000); 
+                    
+                    // Mostrar botón de regresar
+                    setTimeout(() => {
+                        if (backBtn) {
+                            backBtn.classList.add("visible");
+                        }
+                    }, 2500);
+                }, 600);
+            }
+
+            skipBtn.addEventListener("click", endAnimation);
+
+            function showImage(index) {
+                if (skipRequested || index >= targetCount) {
+                    endAnimation();
+                    return;
+                }
+
+                animImg.src = sources[Math.floor(Math.random() * sources.length)];
+
+                animImg.onload = () => {
+                    randomPosition(animImg);
+                    overlay.classList.add("visible");
+
+                    setTimeout(() => {
+                        overlay.classList.remove("visible");
+                    }, displayTime - 500);
+
+                    setTimeout(() => {
+                        showImage(index + 1);
+                    }, displayTime);
+                };
+            }
+
+            showImage(0);
+        });
     </script>
-  </body>
+</body>
 </html>
