@@ -121,20 +121,23 @@
                     return;
                 }
 
-                animVideo.src = videoSources[Math.floor(Math.random() * videoSources.length)];
+                animVideo.src = videoSources[index % videoSources.length];
                 animVideo.load();
-                animVideo.play();
+                
+                // Esperar a que el video tenga dimensiones antes de posicionar
+                animVideo.onloadedmetadata = function() {
+                    randomPosition(animVideo);
+                    animVideo.play();
+                    overlay.classList.add("visible");
 
-                randomPosition(animVideo);
-                overlay.classList.add("visible");
+                    setTimeout(() => {
+                        overlay.classList.remove("visible");
+                    }, displayTime - 500);
 
-                setTimeout(() => {
-                    overlay.classList.remove("visible");
-                }, displayTime - 500);
-
-                setTimeout(() => {
-                    showVideo(index + 1);
-                }, displayTime);
+                    setTimeout(() => {
+                        showVideo(index + 1);
+                    }, displayTime);
+                };
             }
 
             showVideo(0);
