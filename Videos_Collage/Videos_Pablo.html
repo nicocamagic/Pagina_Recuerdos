@@ -13,7 +13,7 @@
     <div class="container collage1">
         <!-- El mosaico debe estar FUERA del grid-container para que no se borre -->
         <div id="mosaicoFinal">
-            <a href="../IMG/Img_Pablo/Esteban.jpg"></a>
+            <img src="../IMG/Img_Pablo/Esteban.jpg" alt="Mosaico Final" />
         </div>
         
         <div class="grid-container">
@@ -27,6 +27,16 @@
             <source src="../IMG/Videos_Pablo/1.mp4" type="video/mp4">
         </video>
         <button id="skipBtn" type="button">Saltar animación</button>
+    </div>
+
+    <!-- Modal para reproducir video con sonido -->
+    <div id="videoModal" class="video-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <video id="modalVideo" controls>
+                <source src="" type="video/mp4">
+            </video>
+        </div>
     </div>
 
     <script>
@@ -78,10 +88,53 @@
                     video.muted = true;
                     video.playsInline = true;
                     
+                    // Agregar evento click para abrir modal
+                    div.addEventListener("click", function() {
+                        openVideoModal(videoSources[(i - 1) % videoSources.length]);
+                    });
+                    
                     div.appendChild(video);
                     containerGrid.appendChild(div);
                 }
             }
+
+            // Funciones del modal
+            const modal = document.getElementById("videoModal");
+            const modalVideo = document.getElementById("modalVideo");
+            const closeModal = document.querySelector(".close-modal");
+            let mosaicoRevelado = false;
+
+            function openVideoModal(videoSrc) {
+                // Detener el mosaico
+                if (mosaico) {
+                    mosaico.classList.remove("revelado");
+                }
+                
+                // Configurar y mostrar el modal
+                modalVideo.src = videoSrc;
+                modal.style.display = "flex";
+                modalVideo.play();
+            }
+
+            function closeVideoModal() {
+                modal.style.display = "none";
+                modalVideo.pause();
+                modalVideo.currentTime = 0;
+                
+                // Solo volver a mostrar el mosaico si ya pasaron los 5 minutos
+                if (mosaico && mosaicoRevelado) {
+                    mosaico.classList.add("revelado");
+                }
+            }
+
+            closeModal.addEventListener("click", closeVideoModal);
+            
+            // Cerrar modal al hacer click fuera del video
+            modal.addEventListener("click", function(e) {
+                if (e.target === modal) {
+                    closeVideoModal();
+                }
+            });
 
             function endAnimation() {
                 if (skipRequested) return;
@@ -95,12 +148,13 @@
                     collageContainer.style.transition = "opacity 1.5s ease-in";
                     collageContainer.style.opacity = "1";
 
-                    // REVELAR MOSAICO
+                    // REVELAR MOSAICO (5 minutos)
                     setTimeout(() => {
                         if (mosaico) {
                             mosaico.classList.add("revelado");
+                            mosaicoRevelado = true;
                         }
-                    }, 10000);  
+                    }, 300000);
                     
                     // Mostrar botón de regresar
                     setTimeout(() => {
